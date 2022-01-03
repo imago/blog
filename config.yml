@@ -1,0 +1,63 @@
+baseURL: "https://the-developer.de"
+languageCode: "en-us"
+title: "the-developer.de"
+theme: "PaperMod"
+paginate: 5
+enableRobotsTXT: true
+enableEmoji: true
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+minify:
+  disableXML: true
+  minifyOutput: true
+params:
+  env: production
+  title: the-developer.de
+  description: "Hugo & Netlify tech example"
+
+  defaultTheme: auto
+  disableThemeToggle: false
+  ShowReadingTime: true
+  ShowShareButtons: true
+  ShowPostNavLinks: true
+  disableSpecial1stPost: false
+  comments: false
+  hidemeta: false
+  showtoc: false
+  tocopen: false
+  label:
+    text: the-developer
+  homeInfoParams:
+    Title: "Hi there! \U0001F596"
+    Content: |
+      - This is a small tech demo on how to use Hugo an Netlify to deploy a clean, minimalistic code generated homepage.
+      -
+      - Source: https://github.com/imago/blog
+      - Netlify howto: https://gohugo.io/hosting-and-deployment/hosting-on-netlify/
+      -
+  socialIcons:
+  - name: twitter
+    url: https://twitter.com/@isakalli
+  - name: github
+    url: https://github.com/imago
+  - name: linkedin
+    url: https://www.linkedin.com/in/dr-ilkay-sakalli/
+  - name: email
+    url: mailto:i.sakalli@gmail.com
+  - name: buymeacoffee
+    url: https://www.buymeacoffee.com/imago
+  cover:
+    hidden: true
+    hiddenInList: true
+    hiddenInSingle: false
+    linkFullImages: true
+markup:
+  highlight:
+    anchorLineNos: false
+    codeFences: true
+    guessSyntax: false
+    lineNos: true
+    lineNumbersInTable: true
+    noClasses: true
+    style: native
