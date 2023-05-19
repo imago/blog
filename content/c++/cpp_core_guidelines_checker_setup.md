@@ -1,8 +1,10 @@
 ---
-title: "CppCoreGuidelines Checker Setup"
+title: "C++ Core Guidelines Checker Setup"
 date: 2023-05-19T12:38:05+02:00
 draft: false
 ---
+
+The CPP Core guidelines are commonly used in modern C++ development. Here, I will show you how you can setup your development environment to check you code against the guidelines using *clang-tidy*.
 
 # Install dependencies
 
