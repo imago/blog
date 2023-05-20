@@ -23,6 +23,7 @@ Here, I will guide you with some examples:
 #include <optional>
 #include <any>
 #include <tuple>
+#include <memory>
 
 void sortVector(std::vector<int> &unsorted_list)
 {
@@ -186,7 +187,7 @@ int main()
 
     // use: rtc
     std::ignore = std::rotate_copy(std::begin(rotate_list), std::begin(rotate_list) + 2, std::end(rotate_list),
-                                   std::ostream_iterator<int>(std::cout, " "));
+                                   std::ostream_iterator<int>(std::cout));
     // use: sto
     std::cout << std::endl;
     printList(rotate_list);
@@ -251,7 +252,7 @@ int main()
     printList(rotate_list, " <remove> ");
 
     // use: rmi
-    pos = std::remove_if(std::begin(rotate_list), std::end(rotate_list), [remove_value](const int &value)
+    pos = std::remove_if(std::begin(rotate_list), std::end(rotate_list), [](const int &value)
                          { return value > remove_value; });
     rotate_list.erase(pos, rotate_list.end());
     if (pos == std::end(rotate_list))
@@ -344,7 +345,8 @@ int main()
         'Z');
     printList(my_copy);
 
-    std::string my_copy_backwards(my_copy.size(), ' ');
+    std::string my_copy_backwards{};
+    my_copy_backwards.resize(my_copy.size());
     // use: mvb
     std::move_backward(std::begin(my_copy) + 2, std::end(my_copy), std::end(my_copy_backwards));
     printList(my_copy_backwards);
@@ -356,6 +358,345 @@ int main()
     // use: ita
     std::iota(std::begin(my_copy), std::end(my_copy), 'A');
     printList(my_copy);
+
+    printList(rotate_list);
+    // use: gnr
+    std::generate(std::begin(rotate_list), std::end(rotate_list), [n = 3]() mutable
+                  { return n--; });
+    // using mutable the captured variable n is not a const anymore and writeable
+    // also possible:
+    // int n = 3
+    // std::generate(std::begin(rotate_list), std::end(rotate_list), [&n]()
+    //              { return n--; });
+    // we do not really need an n out of generate here
+    printList(rotate_list);
+
+    //  use: gnn
+    const int list_size = 7;
+    rotate_list.resize(list_size);
+    std::generate_n(std::begin(rotate_list), list_size, [n = 5]() mutable
+                    { return n--; });
+    printList(rotate_list);
+
+    // use: fln
+    std::fill_n(std::begin(rotate_list), std::abs(list_size - 3), 0);
+    printList(rotate_list);
+
+    // use: fil
+    std::fill(std::begin(rotate_list), std::end(rotate_list) - 5, 9);
+    printList(rotate_list);
+
+    printList(my_copy);
+    // use: cpy
+    std::copy(std::begin(uppercase_hello) + 2, std::end(uppercase_hello) - 2, std::begin(my_copy));
+    printList(my_copy);
+
+    // use: cpn
+    std::copy_n(std::begin(uppercase_hello), uppercase_hello.size() - 2, std::begin(my_copy));
+    printList(uppercase_hello);
+    printList(my_copy);
+
+    // use: cpi
+    std::copy_if(std::begin(uppercase_hello), std::end(uppercase_hello), std::begin(my_copy),
+                 [](const char &input)
+                 {
+                     return std::islower(input);
+                 });
+    printList(my_copy);
+
+    // use: cpb
+    std::copy_backward(std::begin(uppercase_hello), std::end(uppercase_hello), std::end(my_copy));
+    printList(my_copy);
+
+    // use: upb
+    std::vector<int> upper_bound_list = {3, 5, 7, 9, 1};
+    std::sort(std::begin(upper_bound_list), std::end(upper_bound_list));
+    printList(upper_bound_list);
+    auto upper = std::upper_bound(std::begin(upper_bound_list), std::end(upper_bound_list), 4);
+
+    if (upper != std::end(upper_bound_list))
+    {
+        const auto distance = std::distance(std::begin(upper_bound_list), upper);
+        std::cout << "Upper Bound: " << *upper << " at " << distance << std::endl;
+    }
+    else
+    {
+        std::cout << "Upper Bound not found" << std::endl;
+    }
+
+    // use: lwb
+    auto pos_lower_bound = std::lower_bound(std::begin(upper_bound_list), std::end(upper_bound_list), 2);
+    if (pos_lower_bound != std::end(upper_bound_list))
+    {
+        const auto distance = std::distance(std::begin(upper_bound_list), pos_lower_bound);
+        std::cout << "Lower Bound: " << *pos_lower_bound << " at " << distance << std::endl;
+    }
+    else
+    {
+        std::cout << "Lower Bound not found" << std::endl;
+    }
+
+    printList(rotate_list);
+    sortVector(rotate_list);
+
+    // use: ucp
+    std::unique_copy(std::begin(rotate_list), std::end(rotate_list),
+                     std::ostream_iterator<int>(std::cout));
+    // if not sorted, duplicate entries possible with std::unique_copy
+    std::cout << "\n";
+
+    // use: stv
+    std::vector<int> rotate_list_union{};
+    rotate_list_union.resize(rotate_list.size());
+    // use: ucp
+    std::unique_copy(std::begin(rotate_list), std::end(rotate_list),
+                     std::back_inserter(rotate_list_union));
+    printList(rotate_list_union);
+
+    // use: stu
+    std::ignore = std::set_union(std::begin(rotate_list), std::end(rotate_list),
+                                 std::begin(rotate_list_union), std::end(rotate_list_union), std::ostream_iterator<int>(std::cout));
+    // use: sto
+    std::cout << "\n";
+
+    printList(uppercase_hello);
+    // use: tfm
+    std::transform(std::begin(uppercase_hello), std::end(uppercase_hello),
+                   std::begin(my_copy), [](const char &input)
+                   { return std::tolower(input); });
+    printList(my_copy);
+    // use: stn
+    std::ignore = std::set_intersection(std::begin(uppercase_hello), std::end(uppercase_hello),
+                                        std::begin(my_copy), std::end(my_copy), std::ostream_iterator<char>(std::cout));
+    std::cout << "\n";
+
+    // use: std
+    std::ignore = std::set_difference(std::begin(uppercase_hello), std::end(uppercase_hello),
+                                      std::begin(my_copy), std::end(my_copy), std::ostream_iterator<char>(std::cout));
+    std::cout << "\n";
+
+    int m;
+    // use: ssd
+    std::ignore = std::set_symmetric_difference(std::begin(uppercase_hello),
+                                                std::end(uppercase_hello), std::begin(my_copy), std::end(my_copy), std::ostream_iterator<char>(std::cout));
+    std::cout << "\n";
+
+    printList(uppercase_hello);
+    printList(my_copy);
+    // use: mrg
+    std::merge(std::begin(uppercase_hello), std::end(uppercase_hello),
+               std::begin(my_copy), std::end(my_copy), std::ostream_iterator<char>(std::cout));
+    std::cout << "\n";
+
+    // use: stv
+    std::vector<int> first = {3, 1, 7, 9, 5};
+    std::vector<int> second = {2, 6, 4, 10, 8};
+    sortVector(first);
+    sortVector(second);
+    std::vector<int> result(first.size() + second.size());
+    // copy first and second part to result
+    auto it = std::copy(std::begin(first), std::end(first), std::begin(result));
+    std::ignore = std::copy(std::begin(second), std::end(second), it);
+
+    // use: ipm
+    std::inplace_merge(std::begin(result), it, std::end(result));
+    printList(result);
+
+    first = {1, 2, 3, 4};
+    second = {3, 2, 4};
+    sortVector(second);
+
+    // use: inc
+    if (std::includes(std::begin(first), std::end(first),
+                      std::begin(second), std::end(second)))
+    {
+        // use: sto
+        std::cout << "first includes second:" << std::endl;
+    }
+    else
+    {
+        // use: sto
+        std::cout << "first does NOT include second:" << std::endl;
+    }
+    printList(first);
+    printList(second);
+
+    sortVector(rotate_list_union);
+    printList(rotate_list_union);
+
+    // use: eqr
+    auto bounds = std::equal_range(std::begin(rotate_list_union), std::end(rotate_list_union), 0);
+    std::cout << "Range of elements equal to 0: ";
+    for (auto it = bounds.first; it != bounds.second; ++it)
+    {
+        std::cout << *it << " ";
+    }
+    std::cout << std::endl;
+
+    // use: bns
+    auto found = std::binary_search(std::begin(rotate_list_union), std::end(rotate_list_union), 1);
+    if (found)
+    {
+        std::cout << "found!" << std::endl;
+    }
+
+    // use: ajf adjacent_find
+    auto pos_adjacent_find = std::adjacent_find(std::begin(rotate_list_union), std::end(rotate_list_union));
+    if (pos_adjacent_find != std::end(rotate_list_union))
+    {
+        std::cout << "equal pair found: " << *pos_adjacent_find << " " << *pos_adjacent_find++ << std::endl;
+    }
+
+    std::vector<int> all_same{1, 1, 1, 1, 1, 1, 1};
+    printList(all_same);
+    // use: alo all_of
+    if (std::all_of(std::begin(all_same), std::end(all_same), [](const int &input)
+                    { return input == 1; }))
+    {
+        std::cout << "all number are same" << std::endl;
+    }
+
+    all_same.push_back(2);
+    // use: ano any_of
+    if (std::any_of(std::begin(all_same), std::end(all_same), [](const int &input)
+                    { return input > 1; }))
+    {
+        std::cout << "at least one element is > 1" << std::endl;
+    }
+
+    // use: cni count_if
+    all_same.push_back(3);
+    auto n = std::count_if(std::begin(all_same), std::end(all_same), [](const int &input)
+                           { return input > 1; });
+    std::cout << n << " elements are greate than 1" << std::endl;
+
+    // use: cnt count
+    n = std::count(std::begin(all_same), std::end(all_same), 1);
+    std::cout << n << " elements are equal to 1" << std::endl;
+
+    // use: stv
+    std::vector<int> all_same_equal(all_same.size(), 0);
+    // use: cpy
+    std::copy(std::begin(all_same), std::end(all_same), std::begin(all_same_equal));
+    all_same_equal.emplace_back(4);
+    printList(all_same);
+    printList(all_same_equal);
+    // use: eql equal
+    if (std::equal(std::begin(all_same_equal), std::end(all_same_equal), std::begin(all_same)))
+    {
+        std::cout << "all_same and all_same_equal have both equal content." << std::endl;
+    }
+    // Caution here:
+    if (std::equal(std::begin(all_same), std::end(all_same), std::begin(all_same_equal)))
+    {
+        std::cout << "all_same and all_same_equal have both equal content until size of all_same although last element of all_same_equal is different." << std::endl;
+    }
+
+    // use: ffo find_first_of
+    std::vector<int> find_me{1, 2, 3};
+    auto pos_find_first_of = std::find_first_of(std::begin(all_same), std::end(all_same),
+                                                std::begin(find_me), std::end(find_me));
+    if (pos_find_first_of != std::end(all_same))
+    {
+        std::cout << "I found ";
+        printList(find_me);
+        std::cout << " within ";
+        printList(all_same);
+    }
+
+    // use: fin find_if_not
+    auto pos_find_if_not = std::find_if_not(std::begin(all_same), std::end(all_same), [](const int &input)
+                                            { return input == 1; });
+    if (pos_find_if_not != std::end(all_same))
+    {
+        auto distance = std::distance(std::begin(all_same), pos_find_if_not);
+        std::cout << "found not equl 1 at distance: " << distance << std::endl;
+    }
+
+    // use: fnd find
+    auto pos_find = std::find(std::begin(all_same), std::end(all_same), 3);
+    if (pos_find != std::end(all_same))
+    {
+        auto distance = std::distance(std::begin(all_same), pos_find);
+        std::cout << "found 3 at " << distance << std::endl;
+    }
+
+    // use: fne find_end
+    find_me = {1, 1, 1};
+    std::copy(std::begin(find_me), std::end(find_me), std::ostream_iterator<char>{std::cout, " <find_me> "});
+    auto pos_find_end = std::find_end(std::begin(all_same), std::end(all_same),
+                                      std::begin(find_me), std::end(find_me));
+    if (pos_find_end != std::end(all_same))
+    {
+        auto distance = std::distance(std::begin(all_same), pos_find_end);
+        std::cout << "last occurence of ";
+        printList(find_me);
+        std::cout << " at position " << distance << std::endl;
+    }
+
+    // use: fni find_if
+    auto pos_find_if = std::find_if(std::begin(all_same), std::end(all_same), [](const int &input)
+                                    { return input > 1; });
+    if (pos_find_if != std::end(all_same))
+    {
+        auto distance = std::distance(std::begin(all_same), pos_find_if);
+        std::cout << "Greater 1 found at position " << distance << std::endl;
+    }
+
+    // use: fre for_each
+    std::for_each(std::begin(all_same), std::end(all_same), [](const int &input)
+                  { std::cout << (input * input) << " "; });
+    std::cout << std::endl;
+
+    // use: ihp is_heap
+    if (std::is_heap(std::begin(all_same), std::end(all_same)))
+    {
+        std::cout << "alls_same is in heap structure" << std::endl;
+    }
+
+    std::vector<int> heap = {11, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+    bool isHeap = std::is_heap(heap.begin(), heap.end());
+
+    if (isHeap)
+    {
+        std::cout << "The container represents a valid heap." << std::endl;
+    }
+
+    // use: ihu is_heap_until
+    heap.at(1) = 12;
+    auto pos_is_heap_until = std::is_heap_until(std::begin(heap), std::end(heap));
+    if (pos_is_heap_until != std::end(heap))
+    {
+        auto distance = std::distance(std::begin(heap), pos_is_heap_until);
+        std::cout << "The container represents a valid heap until: " << distance << std::endl;
+    }
+
+    // use: ipr is_permutation
+    // use: ipt is_partitioned
+    // use: iss is_sorted
+    // use: isu is_sorted_until
+    // use: lxc lexigraphical_compare
+    // use: mme minmax_element
+    // use: mne min_element
+    // use: msm mismatch
+    // use: mxe max_element
+    // use: nno none_of
+    // use: ppt partition_point
+    // use: srh search
+    // use: srn search_n
+
+    // use: mkh make_heap
+    // use: nth nth_element
+    // use: phh push_heap
+    // use: pph pop_heap
+    // use: psc partial_sort_copy
+    // use: pst partial_sort
+    // use: ptc partition_copy
+    // use: ptn partition
+    // use: spt stable_partition
+    // use: srt sort
+    // use: sth sort_heap
+    // use: sts stable_sort
 
     return 0;
 }
@@ -388,7 +729,7 @@ myany has no value!
 1 <rotate> 2 <rotate> 3 <rotate> 4 <rotate> 2 <rotate> 12 <rotate> 6 <rotate> 
 3 <rotate> 4 <rotate> 2 <rotate> 12 <rotate> 6 <rotate> 1 <rotate> 2 <rotate> 
 4 <rotate_copy> 2 <rotate_copy> 12 <rotate_copy> 6 <rotate_copy> 1 <rotate_copy> 2 <rotate_copy> 3 <rotate_copy> 
-12 6 1 2 3 4 2 
+12612342
 4 2 12 6 1 2 3 
 Hello Flush!
 abc acb bac bca cab cba 
@@ -423,7 +764,59 @@ H <all upper> E <all upper> X <all upper> X <all upper> O <all upper>   <all upp
 H E X X O   W O R L D ! 
 H E y y O   W O R L D ! 
 Z Z X X Z Z Z Z Z Z Z Z 
-    X X Z Z Z Z Z Z Z Z 
+  X X Z Z Z Z Z Z Z Z 
 H E X X O   W O R L D ! 
 A B C D E F G H I J K L 
+1 2 3 4 
+3 2 1 0 
+5 4 3 2 1 0 -1 
+0 0 0 0 1 0 -1 
+9 9 0 0 1 0 -1 
+A B C D E F G H I J K L 
+L L O   w o r l I J K L 
+H E L L O   w o r l d ! 
+H E L L O   w o r l K L 
+w o r l d   w o r l K L 
+H E L L O   w o r l d ! 
+1 3 5 7 9 
+Upper Bound: 5 at 2
+Lower Bound: 3 at 1
+9 9 0 0 1 0 -1 
+-1019
+0 0 0 0 0 0 0 -1 0 1 9 
+-10000000-10199
+H E L L O   w o r l d ! 
+h e l l o   w o r l d ! 
+world!
+HELLO 
+HELLO hello 
+H E L L O   w o r l d ! 
+h e l l o   w o r l d ! 
+HELLO hello world!world!
+1 2 3 4 5 6 7 8 9 10 
+first includes second:
+1 2 3 4 
+2 3 4 
+-1 0 0 0 0 0 0 0 0 1 9 
+Range of elements equal to 0: 0 0 0 0 0 0 0 0 
+found!
+equal pair found: 0 0
+1 1 1 1 1 1 1 
+all number are same
+at least one element is > 1
+2 elements are greate than 1
+7 elements are equal to 1
+1 1 1 1 1 1 1 2 3 
+1 1 1 1 1 1 1 2 3 4 
+all_same and all_same_equal have both equal content until size of all_same although last element of all_same_equal is different.
+I found 1 2 3 
+ within 1 1 1 1 1 1 1 2 3 
+found not equl 1 at distance: 7
+found 3 at 8
+ <find_me>  <find_me>  <find_me> last occurence of 1 1 1 
+ at position 4
+Greater 1 found at position 7
+1 1 1 1 1 1 1 4 9 
+The container represents a valid heap.
+The container represents a valid heap until: 1
 ```
