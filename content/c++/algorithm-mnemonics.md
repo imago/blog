@@ -671,35 +671,238 @@ int main()
         std::cout << "The container represents a valid heap until: " << distance << std::endl;
     }
 
+    std::string permut{"abc"};
+    std::string permut_variant{"bca"};
     // use: ipr is_permutation
-    // use: ipt is_partitioned
-    // use: iss is_sorted
-    // use: isu is_sorted_until
-    // use: lxc lexigraphical_compare
-    // use: mme minmax_element
-    // use: mne min_element
-    // use: msm mismatch
-    // use: mxe max_element
-    // use: nno none_of
+    if (std::is_permutation(std::begin(permut), std::end(permut), std::begin(permut_variant)))
+    {
+        std::cout << permut_variant << " is a permutation of " << permut << std::endl;
+    }
+
+    // use: ptn partition
+    std::vector<int> part{1, 5, 4, 2, 3, 5, 3, 7, 6, 2, 9};
+    printList(part);
+    auto part_point = std::partition(std::begin(part), std::end(part), [](const int &input)
+                                     { return input >= 5; });
+    if (part_point != std::end(part))
+    {
+        std::cout << "partitioned!" << std::endl;
+    }
+    std::cout << "before partition point: " << std::endl;
+    for (auto it = std::begin(part); it != part_point; ++it)
+    {
+        std::cout << *it << " ";
+    }
+    std::cout << "\nafter partition point: " << std::endl;
+    for (auto it = part_point; it != std::end(part); ++it)
+    {
+        std::cout << *it << " ";
+    }
+    std::cout << std::endl;
+
     // use: ppt partition_point
+    // assuming already partitioned list
+    printList(part);
+    auto pos_partition_point = std::partition_point(std::begin(part), std::end(part), [](const int &input)
+                                                    { return input >= 5; });
+    if (pos_partition_point != std::end(part))
+    {
+        auto distance = std::distance(std::begin(part), pos_partition_point);
+        std::cout << "partition point is at " << distance << std::endl;
+    }
+
+    // use: ptc partition_copy
+    std::vector<int> part_copy_first{};
+    std::vector<int> part_copy_second{};
+    std::partition_copy(std::begin(part), std::end(part),
+                        std::back_inserter(part_copy_first), std::back_inserter(part_copy_second), [](const int &input)
+                        { return input >= 5; });
+
+    printList(part_copy_first);
+    printList(part_copy_second);
+
+    // use: ipt is_partitioned
+    if (!std::is_partitioned(std::begin(part), std::end(part), [](const int &input)
+                             { return input % 2 == 0; }))
+    {
+        std::cout << "part is NOT partitioned!" << std::endl;
+    }
+    // use: spt stable_partition
+    printList(part);
+    auto pos_stable_partition = std::stable_partition(std::begin(part), std::end(part), [](const int &input)
+                                                      { return input % 2 == 0; });
+    if (pos_stable_partition != std::end(part))
+    {
+        printList(part);
+    }
+
+    // use: ipt is_partitioned
+    if (std::is_partitioned(std::begin(part), std::end(part), [](const int &input)
+                            { return input % 2 == 0; }))
+    {
+        std::cout << "part now partitioned!" << std::endl;
+    }
+    // use: iss is_sorted
+    if (!std::is_sorted(std::begin(part), std::end(part)))
+    {
+        std::cout << "NOT sorted" << std::endl;
+    }
+    sortVector(part);
+    if (std::is_sorted(std::begin(part), std::end(part)))
+    {
+        std::cout << "sorted" << std::endl;
+    }
+
+    // use: isu is_sorted_until
+    auto pos_is_sorted_until = std::is_sorted_until(std::begin(part), std::end(part) - 4);
+    if (pos_is_sorted_until != std::end(part))
+    {
+        std::cout << "sorted at least until length " << part.size() - 4 << std::endl;
+    }
+    // use: lxc lexigraphical_compare -> fix provided
+    std::vector<int> smaller{1, 2, 3, 4};
+    std::vector<int> greater{2, 3, 4, 5};
+    auto is_less = std::lexicographical_compare(std::begin(smaller), std::end(smaller),
+                                                std::begin(greater), std::end(greater));
+    if (is_less)
+    {
+        printList(smaller);
+        std::cout << " is lexicographically smaller than" << std::endl;
+        printList(greater);
+    }
+    // use: mme minmax_element
+    auto minmax = std::minmax_element(std::begin(greater), std::end(greater));
+    std::cout << "min-max: " << *minmax.first << "-" << *minmax.second << std::endl;
+
+    // use: mne min_element
+    auto pos_min_element = std::min_element(std::begin(greater), std::end(greater));
+    std::cout << "min element: " << *pos_min_element << std::endl;
+
+    // use: msm mismatch
+    std::vector<int> mismatch{2, 3, 5, 5};
+    printList(greater);
+    printList(mismatch);
+    auto values = std::mismatch(std::begin(greater), std::end(greater), std::begin(mismatch));
+    if (values.first != std::end(greater))
+    {
+        auto distance = std::distance(std::begin(greater), values.first);
+        std::cout << "first mismatch " << *values.first << " at position " << distance << std::endl;
+    }
+
+    printList(greater);
+    // use: mxe max_element
+    auto pos_max_element = std::max_element(std::begin(greater), std::end(greater));
+    std::cout << "max element: " << *pos_max_element << std::endl;
+
+    // use: nno none_of
+    if (std::none_of(std::begin(greater), std::end(greater), [](const int &input)
+                     { return input < 1; }))
+    {
+        std::cout << "None of the elements is less than 1." << std::endl;
+    }
+
     // use: srh search
+    auto pos_search = std::search(std::begin(first), std::end(first),
+                                  std::begin(second), std::end(second));
+    if (pos_search != std::end(first))
+    {
+        auto distance = std::distance(std::begin(first), pos_search);
+        printList(second);
+        std::cout << " found within ";
+        printList(first);
+        std::cout << " at position " << distance << std::endl;
+    }
     // use: srn search_n
+    printList(part);
+    auto pos_search_n = std::search_n(std::begin(part), std::end(part), 2, 5);
+    if (pos_search_n != std::end(part))
+    {
+        auto distance = std::distance(std::begin(part), pos_search_n);
+        std::cout << "2 consecutive 5's found at " << distance << std::endl;
+    }
 
     // use: mkh make_heap
+    // A heap is a binary tree-based data structure that satisfies the heap property,
+    // which states that for every node "i" in the heap, the value at "i" is greater
+    // than or equal to the values of its children.
+    printList(part);
+    std::make_heap(std::begin(part), std::end(part));
+    // within heap structure, min and max values can be accessed in O(k)
+    // time; pop_heap of max or minimum value in O(log n); sort heap in O(n log n)
+    // priority queue to pop out min or max values (process ids, etc)
+    printList(part);
+
+    // // use: phh push_heap
+    part.push_back(12);
+    part.push_back(9);
+    std::push_heap(std::begin(part), std::end(part));
+    printList(part);
+    std::make_heap(std::begin(part), std::end(part));
+    printList(part);
+
+    // // use: pph pop_heap
+    std::pop_heap(std::begin(part), std::end(part));
+    std::cout << "max value: " << part.back() << std::endl;
+    part.pop_back();
+    printList(part);
+
     // use: nth nth_element
-    // use: phh push_heap
-    // use: pph pop_heap
-    // use: psc partial_sort_copy
+    // usefull if just needed median
+    // or largest, smallest values without sorting whole list
+    // left are smaller or equal; right are greater than value at second arg position in
+    // std::nth_element
+    std::nth_element(std::begin(part), std::begin(part) + part.size() / 2, std::end(part));
+    std::cout << "median is " << *(std::begin(part) + part.size() / 2) << std::endl;
+    printList(part);
+
+    std::nth_element(std::begin(part), std::begin(part), std::end(part));
+    std::cout << "smallest element is " << *(std::begin(part)) << std::endl;
+    printList(part);
+
+    std::nth_element(std::begin(part), std::end(part) - 1, std::end(part));
+    std::cout << "largest element is " << *(std::end(part) - 1) << std::endl;
+    printList(part);
+
+    // be sure that part is a heap again
+    std::make_heap(std::begin(part), std::end(part));
+    printList(part);
+    // // use: sth sort_heap
+    std::sort_heap(std::begin(part), std::end(part));
+    printList(part);
+
+    std::random_shuffle(std::begin(part), std::end(part));
+    printList(part);
+
     // use: pst partial_sort
-    // use: ptc partition_copy
-    // use: ptn partition
-    // use: spt stable_partition
+    // just guarantees that until std::begin(part) + 2 is sorted
+    // smaller or greater number after std::begin(part) + 2 can
+    // occur
+    std::partial_sort(std::begin(part), std::begin(part) + 4, std::end(part));
+    printList(part);
+
+    std::vector<int> part_copy(part.size());
+    // use: psc partial_sort_copy
+    std::partial_sort_copy(std::begin(part), std::end(part) - 3,
+                           std::begin(part_copy), std::end(part_copy));
+    printList(part_copy);
+
+    printList(part);
     // use: srt sort
-    // use: sth sort_heap
+    std::sort(std::begin(part), std::end(part), std::greater_equal<int>());
+    printList(part);
+
     // use: sts stable_sort
+    // same as stable but order within ranges is preserved
+    std::stable_sort(std::begin(part), std::end(part));
+    printList(part);
 
     return 0;
 }
+```
+
+Compile with e.g. on aarch64:
+```bash
+aarch64-linux-gnu-g++ -std=c++17 main.cpp -o main
 ```
 
 Output
@@ -819,4 +1022,58 @@ Greater 1 found at position 7
 1 1 1 1 1 1 1 4 9 
 The container represents a valid heap.
 The container represents a valid heap until: 1
+bca is a permutation of abc
+1 5 4 2 3 5 3 7 6 2 9 
+partitioned!
+before partition point: 
+9 5 6 7 5 
+after partition point: 
+3 3 2 4 2 1 
+9 5 6 7 5 3 3 2 4 2 1 
+partition point is at 5
+9 5 6 7 5 
+3 3 2 4 2 1 
+part is NOT partitioned!
+9 5 6 7 5 3 3 2 4 2 1 
+6 2 4 2 9 5 7 5 3 3 1 
+part now partitioned!
+NOT sorted
+sorted
+sorted at least until length 7
+1 2 3 4 
+ is lexicographically smaller than
+2 3 4 5 
+min-max: 2-5
+min element: 2
+2 3 4 5 
+2 3 5 5 
+first mismatch 4 at position 2
+2 3 4 5 
+max element: 5
+None of the elements is less than 1.
+2 3 4 
+ found within 1 2 3 4 
+ at position 1
+1 2 2 3 3 4 5 5 6 7 9 
+2 consecutive 5's found at 6
+1 2 2 3 3 4 5 5 6 7 9 
+9 7 5 6 3 4 2 5 3 2 1 
+9 7 9 6 3 5 2 5 3 2 1 12 4 
+12 7 9 6 3 9 2 5 3 2 1 5 4 
+max value: 12
+9 7 9 6 3 5 2 5 3 2 1 4 
+median is 5
+4 1 2 3 3 2 5 5 6 9 7 9 
+smallest element is 1
+1 2 2 3 3 5 4 5 6 9 7 9 
+largest element is 9
+4 2 2 3 3 1 9 5 6 5 7 9 
+9 7 9 6 5 4 2 5 3 2 3 1 
+1 2 2 3 3 4 5 5 6 7 9 9 
+3 6 9 2 4 1 2 9 5 5 3 7 
+1 2 2 3 9 6 4 9 5 5 3 7 
+1 2 2 3 4 5 6 9 9 0 0 0 
+1 2 2 3 9 6 4 9 5 5 3 7 
+9 9 7 6 5 5 4 3 3 2 2 1 
+1 2 2 3 3 4 5 5 6 7 9 9 
 ```
