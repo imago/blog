@@ -15,7 +15,7 @@ params:
   env: production
   title: the-developer.de
   description: "Hugo & Netlify tech example"
-  mainSections: ["c++", "python"]
+  mainSections: ["c++", "python", "emacs"]
   defaultTheme: auto
   disableThemeToggle: false
   ShowReadingTime: true
