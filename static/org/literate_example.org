@@ -1,0 +1,202 @@
+* Hello world example in org mode
+
+#+BEGIN_SRC python :results output
+print("Hello, World!")
+#+END_SRC
+
+#+RESULTS:
+: Hello, World!
+
+#+BEGIN_SRC shell
+find . -type f -name "*.jpg"
+#+END_SRC
+
+#+RESULTS:
+| ./jsMath/test/jsMath40.jpg                                                                               |
+| ./literate_prog_emacs/venv/lib/python3.13/site-packages/matplotlib/mpl-data/sample_data/grace_hopper.jpg |
+
+#+BEGIN_SRC sh :results output
+  echo "FROM ubuntu:12.04" > Dockerfile
+  echo "RUN mkdir /home/hello" >> Dockerfile2
+  echo "COPY path/to/source/file /home/hello" >> Dockerfile2
+  echo docker build -t my-ubuntu .
+#+END_SRC
+
+#+RESULTS:
+: docker build -t my-ubuntu .
+
+Please note that you need to replace `path/to/source/file` with the actual path to your source file on the host machine. Additionally, you need to run this code block in an Emacs environment that supports executing shell commands within an "org mode" code block.
+
+#+name: my_name
+#+begin_src elisp :exports results :results value
+  (setq my_name "Alicia")
+#+end_src
+
+#+RESULTS: my_name
+: Alicia
+
+#+name: my_age
+#+begin_src elisp :exports results :results value
+  (setq my_age 30)
+#+end_src
+
+#+RESULTS: my_age
+: 30
+
+
+#+begin_src python :exports both :var my_name=my_name my_age=my_age :results output
+print(f"Hello, my name is {my_name} and I am {my_age} years old.")
+#+end_src
+
+#+RESULTS:
+: Hello, my name is Alicia and I am 30 years old.
+
+* Ein Abschnitt mit einer Property
+:PROPERTIES:
+:foo: 10011
+:bar: 32
+:barz: 123
+:END:
+
+#+name: properties
+#+begin_src emacs-lisp :exports results :results value
+  ;; Extrahieren der Properties als Alist
+  (setq props (org-entry-properties (point)))
+
+  ;; Umwandeln der Alist in ein String-Format für Python
+  (setq props (mapcar (lambda (entry)
+                        (concat "" (car entry)" : " (cdr entry) ""))
+                      props))
+#+end_src
+
+#+RESULTS: properties
+| CATEGORY : test | BARZ : 123 | BAR : 32 | FOO : 10011 | BLOCKED : | FILE : /Users/imago/workspace/test.org | PRIORITY : B | ITEM : Ein Abschnitt mit einer Property |
+
+
+#+begin_src python :var props=properties :results output
+  # Alle Properties als Dictionary verwenden
+  props_dict = {}
+  for entry in props:
+      key, value = entry.split(" : ")
+      props_dict[key.strip('"')] = value.strip('"')
+  print("Properties als Dictionary:")
+  for key, value in props_dict.items():
+      print(f"{key}: {value}")
+#+end_src
+
+#+RESULTS:
+: Properties als Dictionary:
+: CATEGORY: test
+: BARZ: 123
+: BAR: 32
+: FOO: 10011
+: BLOCKED: 
+: FILE: /Users/imago/workspace/test.org
+: PRIORITY: B
+: ITEM: Ein Abschnitt mit einer Property
+
+
+* Bester Weg bisher
+
+Mit der Möglichkeit auch secrets in einer Datei auszulagern, json als Standardatei verwendbar. Einfach in Python nutzbar.
+
+#+name: config
+#+begin_src python :exports none
+  # Definition der Konfiguration
+  import json
+  config = {
+      "variable1": "WertA",
+      "variable2": "WertB"
+  }
+  return json.dumps(config)
+#+end_src
+
+#+RESULTS: config
+: {"variable1": "WertA", "variable2": "WertB"}
+
+#+name: print-config
+#+begin_src python :exports results :var config=config :results output
+  import json
+  config = json.loads(config)
+  # Verarbeitung der Konfiguration
+  for key, value in config.items():
+      print(f"{key}: {value}")
+#+end_src
+
+#+RESULTS: print-config
+: variable1: WertA
+: variable2: WertB
+
+Dies ist ein Beispiel für inline Code-Blöcke.  
+Das Ergebnis ist src_emacs-lisp[:var arg=2]{(/ 100.0 pi arg)}.
+
+#+NAME: ___DieWahrheitIst
+#+BEGIN_SRC emacs-lisp :exports none :eval no-exports
+(* 21 2)
+#+END_SRC
+
+#+RESULTS: ___DieWahrheitIst
+: 42
+
+#+NAME: ___DieGanzeWahrheit
+#+BEGIN_SRC emacs-lisp :var wahrheit=___DieWahrheitIst :exports none :eval no-exports
+(print wahrheit)
+#+END_SRC
+
+#+RESULTS: ___DieGanzeWahrheit
+: 42
+
+Die Wahrheit ist src_emacs-lisp[:var wahr=___DieWahrheitIst]{(print wahr)}.
+
+#+CALL: ___DieGanzeWahrheit()
+
+Die Wahrheit ist eine Zahl, und ihr Wert ist call____DieGanzeWahrheit().
+Hier muss call_ UND die Methode aufgerufen werden.
+
+
+#+NAME: py4tblformula
+#+BEGIN_SRC python -n -r -k :var arg1=0 arg2=0 :exports none :eval no-export
+return (arg1 * (arg2**2))**(1/2)
+#+END_SRC
+
+#+RESULTS: py4tblformula
+: 0.0
+
+| Wert 1 | Wert 2 | Ergebnis |
+|--------+--------+----------|
+|      1 |      2 |     2.00 |
+|      2 |      4 |     5.66 |
+|      3 |      6 |    10.39 |
+|      4 |      8 |    16.00 |
+|      5 |     10 |    22.36 |
+#+TBLFM: $3='(org-sbe "py4tblformula" (arg1 $1) (arg2 $2));%.2f
+
+#+BEGIN_SRC python :results output
+  import numpy as np
+  import matplotlib.pyplot as plt
+  x = np.linspace(0, 10)
+  line,= plt.plot(x, np.sin(x), '--', linewidth=2)
+  dashes = [10, 5, 100, 5]  # 10 points on, 5 off, 100 on, 5 off
+  line.set_dashes(dashes)
+  plt.savefig("./matplot-exercises.png")
+  plt.savefig("./matplot-exercises.pdf")
+  print("matplot-exercises saved!")
+#+END_SRC
+
+#+RESULTS:
+: matplot-exercises saved!
+
+#+ATTR_ORG: :width 300
+[[file:./matplot-exercises.png][Matplot Example]]
+
+#+TITLE: R-Plot mit Org-Mode
+#+BEGIN_SRC R :session :exports both :results output graphics :file plot.png
+# Einfacher Plot in R
+x <- seq(-pi, pi, length.out = 50)
+y <- sin(x)
+plot(x, y, type = "l", col = "blue", lwd = 2, main = "Sine Wave", xlab = "x", ylab = "sin(x)")
+#+END_SRC
+
+#+RESULTS:
+
+[[file:plot.png][GNU R plot created wit ESS support]]
