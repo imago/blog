@@ -321,6 +321,32 @@ Common defaults:
 
 Close panes by running `exit` in each shell.
 
+## Add fzf (fuzzy finder) to Zsh
+
+fzf is a fast fuzzy finder that integrates nicely with Zsh by providing **key bindings** and fuzzy completion.
+
+### Install fzf
+
+```bash
+brew install fzf
+```
+
+### Enable fzf in `~/.zshrc`
+
+Add this near the end of your `~/.zshrc` (and after other keybinding/vi-mode init, if you use any), then reload the shell.
+
+```zsh
+# fzf (key bindings + fuzzy completion)
+source <(fzf --zsh)
+```
+
+Reload:
+
+```bash
+source ~/.zshrc
+```
+
+With shell integration enabled, you get these defaults: `CTRL-T` (fuzzy pick files/dirs), `CTRL-R` (fuzzy search history), and `ALT-C` (fuzzy jump into a directory; often Option+C on macOS).
 
 ## Putting it all together
 
@@ -330,6 +356,7 @@ After completing these steps, you have:
 - Zsh with Powerlevel10k for a rich, responsive prompt.
 - Autosuggestions, syntax highlighting, and improved history search for a smoother command-line experience.
 - Modern replacements for `ls` and `cd` via `eza` and `zoxide`.
+- Pick files, use fuzzy search history and jump into directories easiley with fzf
 
 ## Find my configurations in my dotfiles folder
 
